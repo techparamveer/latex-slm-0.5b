@@ -36,7 +36,9 @@ def generate(model, tok, prompts, bs, max_new):
     res = [None] * len(prompts)
     for b in tqdm(range(0, len(order), bs), desc="generate"):
         idx = order[b:b + bs]
-        texts = [tok.apply_chat_template(prompts[i], tokenize=False, add_generation_prompt=True) for i in idx]
+        # enable_thinking=False turns off Qwen3-style reasoning; templates without it ignore the flag
+        texts = [tok.apply_chat_template(prompts[i], tokenize=False, add_generation_prompt=True,
+                                         enable_thinking=False) for i in idx]
         enc = tok(texts, return_tensors="pt", padding=True, truncation=True, max_length=3000).to(model.device)
         with torch.no_grad():
             g = model.generate(**enc, max_new_tokens=max_new, do_sample=False, pad_token_id=tok.pad_token_id)
@@ -55,6 +57,8 @@ def main():
     ap.add_argument("--bs", type=int, default=8)
     ap.add_argument("--max_new", type=int, default=512)
     ap.add_argument("--out", default="outputs/eval")
+    ap.add_argument("--adapter", default=None, help="LoRA adapter dir to apply on top of --model")
+    ap.add_argument("--load_4bit", action="store_true", help="load base in 4-bit (3B-8B models on a T4)")
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
 
@@ -62,7 +66,16 @@ def main():
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
     dtype = torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float16
-    model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=dtype, device_map="auto").eval()
+    quant = None
+    if a.load_4bit:
+        from transformers import BitsAndBytesConfig
+        quant = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=dtype)
+    model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=dtype, device_map="auto",
+                                                 quantization_config=quant)
+    if a.adapter:
+        from peft import PeftModel
+        model = PeftModel.from_pretrained(model, a.adapter)
+    model = model.eval()
 
     test = [json.loads(l) for l in open(os.path.join(a.data, "test.jsonl"))]
     results, samples = {}, []

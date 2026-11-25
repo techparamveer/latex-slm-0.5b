@@ -37,7 +37,7 @@ scripts/common.py              compile harness, snippet extraction, splits
 - **Fast filtering:** snippets are compiled in batches of 32 with bisection on failure, using `latex` (DVI) rather than `pdflatex`.
 - **No leakage:** the split is a hash of the paper ID. `03_build_tasks.py` asserts no paper appears in two splits. Near-duplicates are removed with MinHash before splitting.
 - **Fix-task labels are free:** faults are injected into compiling snippets, the compiler log is recorded, and only examples that really fail are kept.
-- **Model:** `Qwen/Qwen2.5-Coder-0.5B-Instruct`, LoRA r=32 on all linear layers, lr 2e-4 cosine, 2 epochs, max length 2048.
+- **Model:** chosen by bake-off (`scripts/bakeoff.sh`), trained with LoRA or QLoRA (`--qlora`). See PLAN.md.
 
 ## Evaluation
 `05_eval.py` reports, per task on test papers only: compile rate (fix, gen, conv), normalized exact match, and difflib similarity. Run it on the base model and the tuned model with the same prompts. The table is written to `outputs/eval/results.md`.

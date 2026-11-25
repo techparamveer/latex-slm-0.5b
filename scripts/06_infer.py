@@ -35,7 +35,8 @@ else:
 tok = AutoTokenizer.from_pretrained(a.model)
 model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype="auto", device_map="auto")
 msgs = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user}]
-enc = tok(tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True), return_tensors="pt").to(model.device)
+enc = tok(tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True, enable_thinking=False),
+          return_tensors="pt").to(model.device)
 with torch.no_grad():
     out = model.generate(**enc, max_new_tokens=a.max_new, do_sample=False)
 print(tok.decode(out[0][enc.input_ids.shape[1]:], skip_special_tokens=True))

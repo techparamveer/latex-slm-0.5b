@@ -35,6 +35,7 @@ def main():
     ap.add_argument("--max_steps", type=int, default=-1, help="use ~200 for a smoke test")
     ap.add_argument("--limit", type=int, default=None, help="cap examples (smoke test)")
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--qlora", action="store_true", help="4-bit base weights, for 3B-8B models on small GPUs")
     a = ap.parse_args()
 
     bf16 = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
@@ -42,7 +43,16 @@ def main():
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
     # T4 has no bf16: keep weights fp32 and use fp16 autocast (stable LoRA training)
-    model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=torch.bfloat16 if bf16 else torch.float32)
+    quant = None
+    if a.qlora:
+        from transformers import BitsAndBytesConfig
+        quant = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_use_double_quant=True,
+                                   bnb_4bit_compute_dtype=torch.bfloat16 if bf16 else torch.float16)
+    model = AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=torch.bfloat16 if bf16 else torch.float32,
+                                                 quantization_config=quant)
+    if a.qlora:
+        from peft import prepare_model_for_kbit_training
+        model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
 
     train, val = load(os.path.join(a.data, "train.jsonl"), a.limit), load(os.path.join(a.data, "val.jsonl"), 500)
     print(f"train={len(train)} val={len(val)} bf16={bf16}")
@@ -70,6 +80,10 @@ def main():
     adapter = os.path.join(a.out, "adapter")
     trainer.save_model(adapter)
     tok.save_pretrained(adapter)
+    if a.qlora:
+        # merging into 4-bit weights is lossy; evaluate with: 05_eval.py --model BASE --adapter OUT/adapter --load_4bit
+        print("saved adapter to", adapter)
+        return
     merged = trainer.model.merge_and_unload()
     merged.save_pretrained(os.path.join(a.out, "merged"))
     tok.save_pretrained(os.path.join(a.out, "merged"))
