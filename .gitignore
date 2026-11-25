@@ -1,5 +1,9 @@
 data/
 outputs/
+# compile-filter checkpoint for the held-out real set; not the frozen test
+eval/real/.compile_checkpoint.jsonl
+eval/real/fix_pairs.jsonl.tmp
+docs/DATA_CARD.md.tmp
 __pycache__/
 *.pyc
 .env

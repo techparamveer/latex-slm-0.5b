@@ -2,11 +2,11 @@
 
 _Overwrite this file after every meaningful step._
 
-- **Last updated:** 2026-11-25 03:27 UTC
-- **Phase:** A (setup and smoke test), blocked on an MCP reload
-- **Branch / commit:** `grok/train` at `e55de67`
-- **Running now:** nothing. The stock `colab-mcp` process was stopped so the next start uses `scripts/colab_mcp_visible.py`. This client did not spawn a replacement (`namespaceStatus: error`, tool call returned "Not connected").
-- **Latest numbers:** none yet
-- **Next step:** reload MCP (or start a new session) so `colab-mcp` comes back, click **Connect** in Helium, set **Runtime → T4 GPU**, then `nvidia-smi`, Drive, sync, install, smoke (`02 --max_papers 200`, `03` small counts `--describer context`, `04` 30 steps on `Qwen/Qwen2.5-Coder-0.5B-Instruct`, `05 --n 20`)
-- **Blockers:** `colab-mcp` is not running. Reloading MCP is required before another `open_colab_browser_connection`.
-- **Questions for the user:** Reload the `colab-mcp` server (new session or reload MCP). When Helium opens the scratchpad, click **Connect** on "Connect to a local Colab MCP server". Then **Runtime → Change runtime type → T4 GPU → Save** and **Connect** the runtime. Free T4 only.
+- **Last updated:** 2026-11-25 04:04 UTC
+- **Phase:** B (real test set). Parser and fixture dry-run are on `grok/real-test`. Compile filtering has not been run.
+- **Branch:** `grok/real-test` (parent `ef13118`)
+- **Running now:** nothing
+- **Latest numbers:** `python3 scripts/01_mine_texse.py --dry-run` parsed 18 fixture rows and 4 candidate pairs (question ids 101, 501, 601, 801). Exit 0. `compile_one` was not called. No compile pass rate.
+- **Next step:** where TeX Live and `7z` exist, run the command in `docs/RUNBOOK.md` section 3a. That run writes `eval/real/fix_pairs.jsonl` and records its SHA-256 in `docs/DATA_CARD.md` only after `compile_one` rejects every question body and accepts every answer body, and at least 100 pairs are kept.
+- **Blockers:** this Mac has no `latex` binary. The archive.org 7z is 777,802,350 bytes and was not downloaded. `eval/real/` is not frozen. Hand-written prompts are 0 of 50.
+- **Questions for the user:** none. This branch does not drive Colab.

@@ -59,5 +59,53 @@ python3 scripts/make_colab_sync_cell.py > /tmp/sync_cell.py
 ## 3. Data
 (to be filled with the exact commands that built each data version)
 
+## 3a. Real test set (tex.stackexchange)
+
+Parser check. Run on this Mac on 2026-11-25 with `/usr/bin/python3` (Python 3.9.6) and again with Python 3.13.5. `which latex` found nothing. `compile_one` was not called.
+
+```
+python3 scripts/01_mine_texse.py --dry-run
+```
+
+```
+fixture=/Users/paramveer/.t3/worktrees/latex-slm/grok-real-test/scripts/fixtures/texse_posts_min.xml
+scanned_rows=18
+candidate_pairs=4
+question_ids=101,501,601,801
+latex=missing
+compile_filtering=not_run
+compile_one_called=false
+frozen=false
+sha256_recorded=false
+```
+
+Exit code 0. The four ids are parser candidates from `scripts/fixtures/texse_posts_min.xml`. They are not `eval/real` and they are not frozen.
+
+Compile filtering has not been run. It runs where TeX Live is installed. The dump file measured the same day from archive.org (HTTP `Content-Length` and the metadata API):
+
+| Field | Value |
+|---|---|
+| URL | `https://archive.org/download/stackexchange/tex.stackexchange.com.7z` |
+| Bytes | 777802350 |
+| md5 | `cb8345bb543c818ea110442847c6cf42` |
+| sha1 | `3e41b52737d3675ce8432c4a1b806423b0828d4f` |
+| Last-Modified | 2024-04-06 |
+| Files inside | 6 |
+
+Those hashes are of the 7z, not of `eval/real/`. No SHA-256 of the test set is recorded. The file list is packed inside the 7z, so the whole archive is the download. Stream `Posts.xml` out of it and do not write the other XML files.
+
+This command has not been run. It needs TeX Live and `7z` (`apt-get install -y p7zip-full` on Colab, next to the TeX Live install in section 2):
+
+```
+mkdir -p data/texse
+curl -L --fail -o data/texse/tex.stackexchange.com.7z \
+  https://archive.org/download/stackexchange/tex.stackexchange.com.7z
+python3 scripts/01_mine_texse.py --verify-dump data/texse/tex.stackexchange.com.7z
+7z e -so data/texse/tex.stackexchange.com.7z Posts.xml \
+  | python3 scripts/01_mine_texse.py --posts - --limit 100
+```
+
+`data/` is gitignored. After `compile_one` has rejected every question body and accepted every answer body, and at least 100 pairs were kept, the script writes `eval/real/fix_pairs.jsonl` and records that file's SHA-256 in `docs/DATA_CARD.md`. Until that happens the set is not frozen. The hand-written prompt slot is `eval/real/prompts/` (0 of 50). Training scripts do not read `eval/real/`.
+
 ## 4. Bake-off, training, eval
 (to be filled)

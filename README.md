@@ -23,6 +23,7 @@ To have an agent run the whole thing, see [docs/CLAUDE_PROMPT.md](docs/CLAUDE_PR
 ## Pipeline
 
 ```
+scripts/01_mine_texse.py      tex.stackexchange Posts.xml -> held-out eval/real fix pairs
 scripts/02_build_snippets.py   stream arXiv rows -> flatten -> extract -> dedupe -> compile-filter
 scripts/03_build_tasks.py      fix / gen / fim / conv datasets + leakage check
 scripts/04_train.py            LoRA SFT, completion-only loss (TRL)
@@ -35,7 +36,7 @@ scripts/common.py              compile harness, snippet extraction, splits
 - **Data source:** `scholarweave/arxiv-latex` on Hugging Face, streamed by row group so nothing multi-GB is downloaded. Only 2018+ papers (`--min_yymm 1801`). Check the per-paper licence before redistributing any derived data.
 - **Compile-checks are per snippet, not per paper.** Whole papers rarely compile in isolation (custom styles, missing figures). Snippets (equations, tables, lists, theorems, paragraphs) are wrapped in one fixed preamble (`common.PREAMBLE`), so "compiles" means the same thing in data filtering and evaluation. Snippets that depend on a paper's custom macros are dropped.
 - **Fast filtering:** snippets are compiled in batches of 32 with bisection on failure, using `latex` (DVI) rather than `pdflatex`.
-- **No leakage:** the split is a hash of the paper ID. `03_build_tasks.py` asserts no paper appears in two splits. Near-duplicates are removed with MinHash before splitting.
+- **No leakage:** the split is a hash of the paper ID. `03_build_tasks.py` asserts no paper appears in two splits. Near-duplicates are removed with MinHash before splitting. `eval/real/` is a separate held-out set. `02_build_snippets.py` and `03_build_tasks.py` do not read it.
 - **Fix-task labels are free:** faults are injected into compiling snippets, the compiler log is recorded, and only examples that really fail are kept.
 - **Model:** chosen by bake-off (`scripts/bakeoff.sh`), trained with LoRA or QLoRA (`--qlora`). See PLAN.md.
 
