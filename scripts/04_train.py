@@ -55,13 +55,18 @@ def main():
         model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
 
     train, val = load(os.path.join(a.data, "train.jsonl"), a.limit), load(os.path.join(a.data, "val.jsonl"), 500)
-    print(f"train={len(train)} val={len(val)} bf16={bf16}")
+    # TRL 1.18 SFTConfig has warmup_steps and no warmup_ratio.
+    step_batch = max(1, a.bs * a.accum)
+    steps_per_epoch = max(1, (len(train) + step_batch - 1) // step_batch)
+    planned = a.max_steps if a.max_steps and a.max_steps > 0 else max(1, int(a.epochs * steps_per_epoch))
+    warmup_steps = max(0, int(round(0.03 * planned)))
+    print(f"train={len(train)} val={len(val)} bf16={bf16} warmup_steps={warmup_steps}")
 
     cfg = SFTConfig(
         output_dir=a.out, num_train_epochs=a.epochs, max_steps=a.max_steps,
         per_device_train_batch_size=a.bs, per_device_eval_batch_size=a.bs,
         gradient_accumulation_steps=a.accum, learning_rate=a.lr, lr_scheduler_type="cosine",
-        warmup_ratio=0.03, logging_steps=20, eval_strategy="steps", eval_steps=250,
+        warmup_steps=warmup_steps, logging_steps=20, eval_strategy="steps", eval_steps=250,
         save_strategy="steps", save_steps=250, save_total_limit=2,
         bf16=bf16, fp16=not bf16, gradient_checkpointing=True, max_length=a.max_len,
         report_to="none", seed=0,
