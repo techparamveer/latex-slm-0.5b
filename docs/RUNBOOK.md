@@ -2,6 +2,29 @@
 
 Exact commands to reproduce every artifact from scratch. Keep this runnable: only add steps that worked.
 
+## 0. Connect Colab from the agent (Mac + Helium)
+
+`colab-mcp` opens `https://colab.research.google.com/notebooks/empty.ipynb` and waits for that page to attach a websocket to `localhost`. Three things blocked that on 2026-11-25:
+
+1. The agent browser never rendered Colab's "Connect to a local Colab MCP server" dialog, so the page never attached.
+2. Helium's Local Network Access permission for `colab.research.google.com` was still "prompt", so the page could not open a websocket to localhost. Click **Allow** once. It is remembered for that origin.
+3. The Cursor MCP client timeout was 30s (`~/.cursor/mcp.json`), shorter than the server's 60s wait, so the client returned MCP `-32001` while the server was still waiting.
+
+Working setup, verified by a standalone websocket test (Helium completed the handshake, `101 Switching Protocols`, Colab sent `tools/list_changed`):
+
+- Browser is Helium. Each of Cursor, Codex, Claude Code, and Grok sets `BROWSER="open -a Helium %s"` on the `colab-mcp` server so `webbrowser.open` lands in Helium.
+- Cursor's `colab-mcp` timeout is 120000 ms.
+- If `open_colab_browser_connection` still times out, the running `colab-mcp` process was started before that env change. Restart it (reload MCP / new session) so it inherits `BROWSER`.
+
+Agent sequence:
+
+1. Call `open_colab_browser_connection`. Helium opens the scratchpad.
+2. In Helium, click **Connect** on the dialog "Connect to a local Colab MCP server". Notebook tools (`add_code_cell`, `run_code_cell`, and the rest) appear only after that click.
+3. In the notebook: **Runtime → Change runtime type → T4 GPU → Save**, then **Connect** the runtime if it is not already connected.
+4. Approve a Google Drive mount the first time it appears.
+
+GPU, Python, and TeX versions below are filled in only after a cell on that runtime has printed them.
+
 ## Environment (fill in with exact versions)
 | Thing | Version |
 |---|---|
