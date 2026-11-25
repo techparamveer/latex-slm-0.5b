@@ -10,19 +10,23 @@ Exact commands to reproduce every artifact from scratch. Keep this runnable: onl
 2. Helium's Local Network Access permission for `colab.research.google.com` was still "prompt", so the page could not open a websocket to localhost. Click **Allow** once. It is remembered for that origin.
 3. The Cursor MCP client timeout was 30s (`~/.cursor/mcp.json`), shorter than the server's 60s wait, so the client returned MCP `-32001` while the server was still waiting.
 
-Working setup, verified by a standalone websocket test (Helium completed the handshake, `101 Switching Protocols`, Colab sent `tools/list_changed`):
+Working setup:
 
-- Browser is Helium. Each of Cursor, Codex, Claude Code, and Grok sets `BROWSER="open -a Helium %s"` on the `colab-mcp` server so `webbrowser.open` lands in Helium.
-- Cursor's `colab-mcp` timeout is 120000 ms.
-- If `open_colab_browser_connection` still times out, the running `colab-mcp` process was started before that env change. Restart it (reload MCP / new session) so it inherits `BROWSER`.
-- This client lists MCP tools once, at process start, and does not apply `notifications/tools/list_changed`. Stock `colab-mcp` only publishes `add_code_cell` and the other notebook tools after Helium attaches, so they never become callable. Cursor's `colab-mcp` command therefore runs `scripts/colab_mcp_visible.py` (same package, two extra tools that exist from the first `tools/list`): `colab_list_tools` and `colab_call`. Restart the process after changing that command.
+- Browser is Helium. Cursor, Codex, Claude Code, and Grok set `BROWSER="open -a Helium %s"` on `colab-mcp`.
+- Cursor's client timeout is 120000 ms.
+- The command is `uvx --from git+https://github.com/googlecolab/colab-mcp python ~/.local/share/colab-mcp/colab_mcp_visible.py`. The same source is `scripts/colab_mcp_visible.py`.
+- Helium Local Network Access for `colab.research.google.com` must be **Allow** (once per origin).
+
+Handshake bug, fixed 2026-11-25 and verified with a client that allows 25s per call: `ColabProxyClient.await_proxy_connection` used `asyncio.wait_for(gather(connection_live.wait(), self._start_task))`. A timeout or a cancelled tool call cancelled that gather and `_start_task` with it. `_start_task` is what builds the MCP session on the websocket. After it was cancelled, every browser connection was accepted and dropped in the same second (`BrokenResourceError` in `_read_from_socket`). The replacement polls and never cancels `_start_task`. `open_colab_browser_connection` waits only `COLAB_UI_WAIT` (15s) so it returns before the client timeout. `colab_status` reports `connected` and `port` (no token). `colab_wait_connected` polls for up to 25s.
 
 Agent sequence:
 
-1. Call `open_colab_browser_connection`. Helium opens the scratchpad.
-2. In Helium, click **Connect** on the dialog "Connect to a local Colab MCP server". Notebook tools (`add_code_cell`, `run_code_cell`, and the rest) appear only after that click.
-3. In the notebook: **Runtime → Change runtime type → T4 GPU → Save**, then **Connect** the runtime if it is not already connected.
-4. Approve a Google Drive mount the first time it appears.
+1. If a `colab-mcp` process is still running from before this file, stop it so the client starts the fixed entry.
+2. Call `open_colab_browser_connection` **once**. It opens one Helium tab and returns within 15s.
+3. `colab_status` gives the listen port. Click **Connect** on the dialog "Connect to a local Colab MCP server" in the Helium tab whose `mcpProxyPort` equals that port.
+4. Poll `colab_wait_connected` until it returns `connected`. Do not call `open_colab_browser_connection` again while waiting. Another call opens another tab.
+5. In the notebook: **Runtime → Change runtime type → T4 GPU → Save**, then **Connect** the runtime if it is not already connected.
+6. Approve a Google Drive mount the first time it appears.
 
 GPU, Python, and TeX versions below are filled in only after a cell on that runtime has printed them.
 
