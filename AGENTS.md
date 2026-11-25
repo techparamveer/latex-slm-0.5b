@@ -6,3 +6,6 @@
 - Do not commit data/, outputs/ or secrets. Keys come from Colab secrets or env vars.
 - Only one agent should drive the Colab notebook (colab-mcp) at a time.
 - Report real measured numbers only. Any data or training change needs before/after eval numbers.
+- Document everything as you go (section 3 of `docs/prompts/GROK_TRAIN.md`): `docs/STATUS.md`, `docs/journal/`,
+  `docs/EXPERIMENTS.md`, `docs/DECISIONS.md`, `docs/DATA_CARD.md`, `docs/RUNBOOK.md`, `results/EXP-###/`.
+- Code reaches Colab via `scripts/make_colab_sync_cell.py` (no tokens in notebooks).
