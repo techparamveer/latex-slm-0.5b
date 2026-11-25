@@ -69,7 +69,18 @@ python3 scripts/make_colab_sync_cell.py > /tmp/sync_cell.py
 ```
 
 ## 3. Data
-(to be filled with the exact commands that built each data version)
+
+Smoke on the 2026-11-25 T4 VM, from `/content/latex-slm`, after the installs above. Drive was not mounted.
+
+```
+python -u scripts/02_build_snippets.py --max_papers 200 --workers 2
+python -u scripts/03_build_tasks.py --n1 60 --n2 60 --n3_per_doc 1 --n3_max 40 --n4 40 --describer context
+python -u scripts/04_train.py --model Qwen/Qwen2.5-Coder-0.5B-Instruct --max_steps 30 --out outputs/EXP-001/train
+python -u scripts/05_eval.py --model Qwen/Qwen2.5-Coder-0.5B-Instruct --tag base --n 20 --out outputs/EXP-001/eval
+python -u scripts/05_eval.py --model outputs/EXP-001/train/merged --tag tuned --n 20 --out outputs/EXP-001/eval
+```
+
+`03` printed `leakage check passed` before `04` was started. Measured results are in `results/EXP-001/`.
 
 ## 4. Bake-off, training, eval
 (to be filled)
