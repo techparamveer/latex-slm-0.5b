@@ -15,6 +15,7 @@ Working setup, verified by a standalone websocket test (Helium completed the han
 - Browser is Helium. Each of Cursor, Codex, Claude Code, and Grok sets `BROWSER="open -a Helium %s"` on the `colab-mcp` server so `webbrowser.open` lands in Helium.
 - Cursor's `colab-mcp` timeout is 120000 ms.
 - If `open_colab_browser_connection` still times out, the running `colab-mcp` process was started before that env change. Restart it (reload MCP / new session) so it inherits `BROWSER`.
+- This client lists MCP tools once, at process start, and does not apply `notifications/tools/list_changed`. Stock `colab-mcp` only publishes `add_code_cell` and the other notebook tools after Helium attaches, so they never become callable. Cursor's `colab-mcp` command therefore runs `scripts/colab_mcp_visible.py` (same package, two extra tools that exist from the first `tools/list`): `colab_list_tools` and `colab_call`. Restart the process after changing that command.
 
 Agent sequence:
 
