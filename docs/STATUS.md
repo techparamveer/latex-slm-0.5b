@@ -2,11 +2,11 @@
 
 _Overwrite this file after every meaningful step._
 
-- **Last updated:** 2026-11-25 05:05 UTC
-- **Phase:** A smoke is done (Gate A). Next corpus step is running: 1,500 arXiv papers into `data/arxiv-1500`, not overwriting the 200-paper smoke set.
-- **Branch / commit:** `grok/train`. VM has `7cbe41d` unpacked; later docs commits may not be on the VM yet. This status update is the next commit.
-- **Running now:** Colab pid 40018, `python3 -u scripts/02_build_snippets.py --max_papers 1500 --workers 2 --out data/arxiv-1500`, started on the existing session (MCP port 50531, websocket connected). Log `/content/latex-slm/outputs/EXP-002/02_build_snippets.log` was still 0 bytes a few seconds after start. No second notebook tab was opened.
-- **Latest numbers:** Smoke, 200 papers: compile pass rate 58.4% (2732/4678). Leakage check passed. 30-step train `train_loss` 0.4748, runtime 263.9 s. Eval `--n 20` (fix 3, gen 1, fim 5, conv 3): tuned vs base compile rate fix 0.667 vs 0.667, gen 1.000 vs 0.000, conv 1.000 vs 0.000. fim similarity 0.134 vs 0.185. GPU cell after reconnect: `python 3.13.16`, `torch 2.14.1+cu130 cuda True`, `gpu Tesla T4`. The 1,500-paper run has no pass rate yet.
-- **Next step:** When pid 40018 prints a compile pass rate, build tasks from `data/arxiv-1500` only, require `leakage check passed`, then train. Do not open another Colab tab.
-- **Blockers:** Drive is still unmounted. `/content/latex-slm/{data,outputs}` disappears if this runtime disconnects.
+- **Last updated:** 2026-11-25 05:32 UTC
+- **Phase:** A smoke is done. Corpus step EXP-002 is still compiling.
+- **Branch / commit:** `grok/train`. This status update is the next commit.
+- **Running now:** Colab pid 40018, elapsed 31:01, `python3 -u scripts/02_build_snippets.py --max_papers 1500 --workers 2 --out data/arxiv-1500`. Existing session, MCP port 50531, websocket connected. No new tab. Compile bar in `outputs/EXP-002/02_build_snippets.log`: 179/1091 (16%) at 25:18, tqdm ETA about 57:55. Log was 8798 bytes, 144 lines.
+- **Latest numbers:** No new eval. Last finished eval is EXP-001 (`results/EXP-001/`), all 12 test rows. Base vs tuned: fix compile 0.667 vs 0.667 (n=3), exact 0.000 vs 0.333, similarity 0.931 vs 0.996; gen compile 0.000 vs 1.000 (n=1), exact 0.000 vs 0.000, similarity 0.071 vs 0.193; fim exact 0.000 vs 0.000, similarity 0.185 vs 0.134 (n=5); conv compile 0.000 vs 1.000 (n=3), exact 0.000 vs 0.333, similarity 0.676 vs 0.985. Smoke snippet pass rate 58.4% (2732/4678) on 200 papers. 30-step `train_loss` 0.4748. GPU: Tesla T4, torch 2.14.1+cu130, python 3.13.16. EXP-002 has no pass rate yet.
+- **Next step:** Leave pid 40018 running. When it prints a compile pass rate, build tasks from `data/arxiv-1500` only, require `leakage check passed`, then train. Do not open another Colab tab.
+- **Blockers:** Drive is still unmounted. VM files disappear if the runtime disconnects.
 - **Questions for the user:** none.
