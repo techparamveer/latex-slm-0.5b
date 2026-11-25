@@ -51,6 +51,7 @@ That line is in `~/.zshrc`. `compile_one` of a one-line equation returned true a
 | trl | 1.18.2 |
 | peft | 0.21.2 |
 | bitsandbytes | 0.50.2 |
+| torchao | 0.18.0 (peft 0.21.2 refused the preinstalled 0.10.0) |
 | TeX Live | 2023/Debian. `pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian)` |
 | pandoc | 3.1.3 |
 

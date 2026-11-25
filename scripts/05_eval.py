@@ -65,7 +65,12 @@ def main():
     tok = AutoTokenizer.from_pretrained(a.model, padding_side="left")
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    dtype = torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float16
+    bf16 = (
+        torch.cuda.is_available()
+        and torch.cuda.get_device_capability()[0] >= 8
+        and torch.cuda.is_bf16_supported()
+    )
+    dtype = torch.bfloat16 if bf16 else torch.float16
     quant = None
     if a.load_4bit:
         from transformers import BitsAndBytesConfig

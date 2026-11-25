@@ -38,7 +38,13 @@ def main():
     ap.add_argument("--qlora", action="store_true", help="4-bit base weights, for 3B-8B models on small GPUs")
     a = ap.parse_args()
 
-    bf16 = torch.cuda.is_available() and torch.cuda.is_bf16_supported()
+    # T4 is compute capability 7.5. torch.is_bf16_supported() can still be true there,
+    # and the bf16 GEMM then fails. Hardware bf16 starts at 8.0.
+    bf16 = (
+        torch.cuda.is_available()
+        and torch.cuda.get_device_capability()[0] >= 8
+        and torch.cuda.is_bf16_supported()
+    )
     tok = AutoTokenizer.from_pretrained(a.model)
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
