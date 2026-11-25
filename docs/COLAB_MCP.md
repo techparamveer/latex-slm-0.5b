@@ -15,6 +15,16 @@ Google's open-source Colab MCP server (https://github.com/googlecolab/colab-mcp)
 3. Restart Claude Code. The agent calls `open_colab_browser_connection`, which opens Colab in your browser. Click Connect in the notebook.
 4. In Colab: Runtime > Change runtime type > GPU. Add the secrets listed in the README.
 
+## Other clients (already configured on this Mac)
+```
+codex mcp add colab-mcp -- uvx git+https://github.com/googlecolab/colab-mcp
+grok mcp add --scope user colab-mcp uvx -- git+https://github.com/googlecolab/colab-mcp
+# Cursor / cursor-agent: ~/.cursor/mcp.json
+{"mcpServers":{"colab-mcp":{"command":"uvx","args":["git+https://github.com/googlecolab/colab-mcp"],"timeout":30000}}}
+```
+The server needs clients that support `notifications/tools/list_changed`. Claude Code is confirmed; if another
+client shows no Colab tools after connecting, use Claude Code to drive Colab.
+
 ## Notes
 - The client must run locally and support `notifications/tools/list_changed` (Claude Code does).
 - The server connects to a notebook session in your browser, so keep that Colab tab open.

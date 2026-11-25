@@ -1,0 +1,8 @@
+# Notes for coding agents (Codex, Cursor, Grok, Claude)
+
+- Goal and roadmap: see PLAN.md. Pipeline lives in scripts/, numbered in run order.
+- Compile checks always go through `scripts/common.py: compile_one`. Do not add a second definition of "compiles".
+- Splits are by paper (hash of arXiv id). Never create splits at snippet level.
+- Do not commit data/, outputs/ or secrets. Keys come from Colab secrets or env vars.
+- Only one agent should drive the Colab notebook (colab-mcp) at a time.
+- Report real measured numbers only. Any data or training change needs before/after eval numbers.
