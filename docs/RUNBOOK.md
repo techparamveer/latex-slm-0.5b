@@ -47,12 +47,12 @@ That line is in `~/.zshrc`. `compile_one` of a one-line equation returned true a
 | Colab runtime / GPU | Tesla T4, free tier. Measured 2026-11-25 on the reconnected runtime (cell `MtjtYD6szRfK`): `python 3.13.16`, `torch 2.14.1+cu130 cuda True`, `gpu Tesla T4`, `nvidia-smi -L` → `GPU 0: Tesla T4`. The runtime-type dialog had T4 GPU selected. Host RAM shown in the UI at connect: 12.67 GB. |
 | Python | 3.13.16 |
 | torch | 2.14.1+cu130 |
-| transformers | |
-| trl | |
-| peft | |
-| bitsandbytes | |
-| TeX Live | |
-| pandoc | |
+| transformers | 5.22.1 |
+| trl | 1.18.2 |
+| peft | 0.21.2 |
+| bitsandbytes | 0.50.2 |
+| TeX Live | 2023/Debian. `pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian)` |
+| pandoc | 3.1.3 |
 
 ## 1. Get the code onto Colab
 ```
