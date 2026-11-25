@@ -30,12 +30,23 @@ Agent sequence:
 
 GPU, Python, and TeX versions below are filled in only after a cell on that runtime has printed them.
 
+## Local Mac TeX (user install, 2026-11-25)
+
+Full MacTeX was not installed. BasicTeX's installer needs an admin password. TinyTeX is TeX Live 2026 in the home directory:
+
+```
+export PATH="$PATH:$HOME/Library/TinyTeX/bin/universal-darwin"
+latex --version   # pdfTeX 3.141592653-2.6-1.40.29 (TeX Live 2026)
+```
+
+That line is in `~/.zshrc`. `compile_one` of a one-line equation returned true after `tlmgr install` of the preamble packages.
+
 ## Environment (fill in with exact versions)
 | Thing | Version |
 |---|---|
-| Colab runtime / GPU | |
-| Python | |
-| torch | |
+| Colab runtime / GPU | Tesla T4, free tier. Measured 2026-11-25 on the reconnected runtime (cell `MtjtYD6szRfK`): `python 3.13.16`, `torch 2.14.1+cu130 cuda True`, `gpu Tesla T4`, `nvidia-smi -L` → `GPU 0: Tesla T4`. The runtime-type dialog had T4 GPU selected. Host RAM shown in the UI at connect: 12.67 GB. |
+| Python | 3.13.16 |
+| torch | 2.14.1+cu130 |
 | transformers | |
 | trl | |
 | peft | |

@@ -2,11 +2,11 @@
 
 _Overwrite this file after every meaningful step._
 
-- **Last updated:** 2026-11-25 03:27 UTC
-- **Phase:** A (setup and smoke test), blocked on an MCP reload
-- **Branch / commit:** `grok/train` at `e55de67`
-- **Running now:** nothing. The stock `colab-mcp` process was stopped so the next start uses `scripts/colab_mcp_visible.py`. This client did not spawn a replacement (`namespaceStatus: error`, tool call returned "Not connected").
-- **Latest numbers:** none yet
-- **Next step:** reload MCP (or start a new session) so `colab-mcp` comes back, click **Connect** in Helium, set **Runtime → T4 GPU**, then `nvidia-smi`, Drive, sync, install, smoke (`02 --max_papers 200`, `03` small counts `--describer context`, `04` 30 steps on `Qwen/Qwen2.5-Coder-0.5B-Instruct`, `05 --n 20`)
-- **Blockers:** `colab-mcp` is not running. Reloading MCP is required before another `open_colab_browser_connection`.
-- **Questions for the user:** Reload the `colab-mcp` server (new session or reload MCP). When Helium opens the scratchpad, click **Connect** on "Connect to a local Colab MCP server". Then **Runtime → Change runtime type → T4 GPU → Save** and **Connect** the runtime. Free T4 only.
+- **Last updated:** 2026-11-25 03:57 UTC
+- **Phase:** A (setup and smoke test). Gate A not passed. GPU probe passed.
+- **Branch / commit:** `grok/train` at `ef13118`
+- **Running now:** Colab scratchpad, MCP port 50531, websocket connected. Runtime is connected. Cell `MtjtYD6szRfK` just printed `python 3.13.16`, `torch 2.14.1+cu130 cuda True`, `gpu Tesla T4`, `GPU 0: Tesla T4`.
+- **Latest numbers:** none (smoke not started). The CPU lines from the previous VM (python 3.13.18, torch 2.14.1+cpu, cuda False, nvidia-smi not found) are the pre-reconnect measurement only.
+- **Next step:** Mount Drive at `/content/drive/MyDrive/latex-slm`, sync commit `ef13118`, install TeX Live + `requirements.txt`, record those versions, then smoke (`02 --max_papers 200`, `03` small counts `--describer context`, leakage check, `04` 30 steps on `Qwen/Qwen2.5-Coder-0.5B-Instruct`, `05 --n 20`).
+- **Blockers:** none
+- **Questions for the user:** none
