@@ -2,7 +2,8 @@
 
 _Overwrite this file after every meaningful step._
 
-- **Last updated:** 2026-11-27 12:23 UTC
+- **Last updated:** 2026-11-27 12:30 UTC
+- **Automation:** The 10-minute loop checks the existing Colab session first. If that session has no free GPU, it uses `aside-cua` on the existing Helium window and runs the Kaggle notebook `https://www.kaggle.com/code/techparamveer/latex-slm/edit`. On the Colab usage-limit dialog, leave Close, Connect without GPU, and Pay As You Go unclicked. The schedule is paused until the user turns it on. The same order is in `AGENTS.md`.
 - **Phase:** A smoke is done. EXP-008 is running on Kaggle: TeX install, then a 1500-paper rebuild, then training only if the leakage check passes.
 - **Branch / commit:** `grok/train`. The notebook is unpacked at `cb59fe3`. This status update is the next commit.
 - **Running now:** Kaggle draft session, `https://www.kaggle.com/code/techparamveer/latex-slm/edit`, account `techparamveer`. Accelerator `GPU T4 x2`, persistence `Files only`, internet on. The second cell's help text is `Cell execution started at 12:22pm`. GPU quota last read `00:09 / 30 hrs`. The cell installs TeX if `pdflatex` is missing, then `02_build_snippets.py --max_papers 1500 --workers 2 --out data/arxiv-1500`, then `03_build_tasks.py` with the same counts as the lost 1500-paper task build, then `04_train.py --model /kaggle/working/models/Qwen2.5-Coder-0.5B-Instruct --data data/arxiv-1500/sft --out outputs/EXP-008/train --epochs 2` only if the log contains `leakage check passed`. No stdout line from that cell is in the accessibility tree yet. `apt-get -qq` prints nothing until it finishes. Colab is still on the GPU usage-limit dialog. The 10-minute loop stays paused so it does not drive this Helium window.
