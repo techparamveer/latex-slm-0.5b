@@ -1,0 +1,25 @@
+{
+  "fix": {
+    "n": 27,
+    "exact_norm": 0.4074074074074074,
+    "similarity": 0.9849710325587672,
+    "compile_rate": 0.5185185185185185
+  },
+  "gen": {
+    "n": 25,
+    "exact_norm": 0.0,
+    "similarity": 0.26143179196723537,
+    "compile_rate": 0.76
+  },
+  "fim": {
+    "n": 106,
+    "exact_norm": 0.0,
+    "similarity": 0.15727215922110208
+  },
+  "conv": {
+    "n": 38,
+    "exact_norm": 0.5,
+    "similarity": 0.8912338430910406,
+    "compile_rate": 0.8947368421052632
+  }
+}
