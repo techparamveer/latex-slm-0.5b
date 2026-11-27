@@ -173,14 +173,15 @@ def payload(provider, exp, commit, plain, technical):
     }
 
 
-def status_payload(provider, exp, note):
-    text = "One model is under training."
+def status_payload(provider, exp, note, headline=""):
+    text = headline.strip() or "One model is under training."
     if note:
         text += " " + note
+    title = f"latex-slm {exp}" if headline.strip() else f"latex-slm {exp} training"
     return {
         "username": "latex-slm",
         "embeds": [{
-            "title": f"latex-slm {exp} training",
+            "title": title,
             "color": 0x1F883D,
             "description": text[:4000],
             "footer": {"text": provider[:200]},
@@ -250,11 +251,13 @@ def main():
     ap.add_argument("--commit", default="")
     ap.add_argument("--note", default="")
     ap.add_argument("--status", action="store_true",
-                    help="a train is in progress; do not attach an older score chart")
+                    help="no score chart; a train update rather than a finished eval")
+    ap.add_argument("--headline", default="",
+                    help="replaces 'One model is under training.' when the train is no longer running")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
     if args.status:
-        data = status_payload(args.provider, args.exp, args.note)
+        data = status_payload(args.provider, args.exp, args.note, args.headline)
         if args.dry_run:
             print(data["embeds"][0]["description"])
             print(data["embeds"][0]["footer"]["text"])
