@@ -173,6 +173,38 @@ def payload(provider, exp, commit, plain, technical):
     }
 
 
+def status_payload(provider, exp, note):
+    text = "One model is under training."
+    if note:
+        text += " " + note
+    return {
+        "username": "latex-slm",
+        "embeds": [{
+            "title": f"latex-slm {exp} training",
+            "color": 0x1F883D,
+            "description": text[:4000],
+            "footer": {"text": provider[:200]},
+        }],
+    }
+
+
+def send_json(url, data):
+    body = json.dumps(data).encode()
+    req = urllib.request.Request(
+        url, data=body, headers={"Content-Type": "application/json", "User-Agent": "latex-slm"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            print(f"discord notify sent: http {resp.status}")
+    except urllib.error.HTTPError as exc:
+        print(f"discord notify failed: http {exc.code}", file=sys.stderr)
+        return 1
+    except Exception:
+        print("discord notify failed: request error", file=sys.stderr)
+        return 1
+    return 0
+
+
 def send(url, data, chart_path):
     boundary = uuid.uuid4().hex
     chart = Path(chart_path).read_bytes()
@@ -213,12 +245,27 @@ def send(url, data, chart_path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--provider", required=True)
-    ap.add_argument("--results", required=True)
+    ap.add_argument("--results", default="", help="directory with base.json and tuned.json; omit with --status")
     ap.add_argument("--exp", default="eval")
     ap.add_argument("--commit", default="")
     ap.add_argument("--note", default="")
+    ap.add_argument("--status", action="store_true",
+                    help="a train is in progress; do not attach an older score chart")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+    if args.status:
+        data = status_payload(args.provider, args.exp, args.note)
+        if args.dry_run:
+            print(data["embeds"][0]["description"])
+            print(data["embeds"][0]["footer"]["text"])
+            return 0
+        url = webhook_url()
+        if not url:
+            print("discord notify skipped: no webhook configured", file=sys.stderr)
+            return 0
+        return send_json(url, data)
+    if not args.results:
+        ap.error("--results is required unless --status is set")
     base, tuned = load_pair(args.results)
     rows, improved, worse, same = compare(base, tuned)
     plain = plain_summary(improved, worse, same, args.note)
