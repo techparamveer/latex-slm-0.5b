@@ -68,7 +68,7 @@ python3 scripts/notify_discord.py \
   --note "one sentence on what just finished"
 ```
 
-The URL is `DISCORD_WEBHOOK_URL` or `~/.config/latex-slm/discord_webhook` (mode 600). It is not in git. With no URL the script prints `discord notify skipped: no webhook configured` and exits 0. `--dry-run` prints the message and does not post.
+The URL is `DISCORD_WEBHOOK_URL` or `~/.config/latex-slm/discord_webhook` (mode 600). It is not in git. The post is an embed: a plain-English summary, a PNG of the base-vs-tuned bars, then the numeric lines, with the provider in the footer. With no URL the script prints `discord notify skipped: no webhook configured` and exits 0. `--dry-run` prints the text and the chart path and does not post.
 
 ## Kaggle
 
