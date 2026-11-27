@@ -55,6 +55,21 @@ That line is in `~/.zshrc`. `compile_one` of a one-line equation returned true a
 | TeX Live | 2023/Debian. `pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian)` |
 | pandoc | 3.1.3 |
 
+## Discord updates
+
+After a measured update, post the provider and the base-vs-tuned summary:
+
+```
+python3 scripts/notify_discord.py \
+  --provider "Kaggle, two Tesla T4s" \
+  --results results/EXP-001 \
+  --exp EXP-007 \
+  --commit f54f396 \
+  --note "one sentence on what just finished"
+```
+
+The URL is `DISCORD_WEBHOOK_URL` or `~/.config/latex-slm/discord_webhook` (mode 600). It is not in git. With no URL the script prints `discord notify skipped: no webhook configured` and exits 0. `--dry-run` prints the message and does not post.
+
 ## Kaggle
 
 Use this when the Colab session has no free GPU. The account is already logged in as `techparamveer` in the existing Helium window. Drive that window with `aside-cua`. Stay on one Helium window.

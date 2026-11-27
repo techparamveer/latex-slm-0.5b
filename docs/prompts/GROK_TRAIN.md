@@ -30,7 +30,8 @@ from the docs alone.
 - **Local Mac:** use it for code edits, unit tests and small checks. Check `which latex pandoc` before relying on
   them. Do not install MacTeX or other large software without asking.
 - **Keys:** use `ANTHROPIC_API_KEY`, `XAI_API_KEY` or `HF_TOKEN` only if they already exist in Colab secrets or
-  the environment. Never print, log or commit any secret.
+  the environment. Never print, log or commit any secret. `DISCORD_WEBHOOK_URL` is the same kind of secret:
+  after a measured update, `scripts/notify_discord.py` posts the provider and the base-vs-tuned summary.
 
 ## 2. Hard rules
 - **Real numbers only.** Never invent or estimate a metric and present it as measured. A failed run is logged
