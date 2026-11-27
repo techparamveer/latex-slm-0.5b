@@ -15,8 +15,7 @@ from the docs alone.
 - **Local repo:** `/Volumes/DeveloperStorage/GitHub/latex-slm`. Remote `origin` is the private GitHub repo
   `techparamveer/latex-slm`; pushing from this Mac works.
 - **Branch:** do all work on `grok/train` (create it from `main`). Push often. Never force-push. The user merges.
-- **GPU: Google Colab via the `colab-mcp` tools.** Call `open_colab_browser_connection`. If the user has to click
-  Connect, switch the runtime type to GPU, or approve a popup, say exactly what to click and wait.
+- **GPU order:** free Colab T4 first, via the `colab-mcp` tools. Call `open_colab_browser_connection` only when no Colab tab is already open. If the user has to click Connect, switch the runtime type to GPU, or approve a popup, say exactly what to click and wait. If Colab reports a GPU usage limit, leave Close, Connect without GPU, and Pay As You Go alone, and continue on the logged-in Kaggle account in the existing Helium window via `aside-cua`. Procedure: `docs/RUNBOOK.md` section "Kaggle". Free T4 only.
 - **Getting code into Colab (no tokens):** commit first, then run
   `python3 scripts/make_colab_sync_cell.py > /tmp/sync_cell.py`, add the file's content as a code cell and run
   it. It unpacks the committed repo into `/content/latex-slm`. Re-sync after every commit you need on Colab.

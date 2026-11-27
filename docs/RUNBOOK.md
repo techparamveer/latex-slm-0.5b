@@ -55,6 +55,31 @@ That line is in `~/.zshrc`. `compile_one` of a one-line equation returned true a
 | TeX Live | 2023/Debian. `pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian)` |
 | pandoc | 3.1.3 |
 
+## Kaggle
+
+Use this when the Colab session has no free GPU. The account is already logged in as `techparamveer` in the existing Helium window. Drive that window with `aside-cua`. Stay on one Helium window.
+
+Measured 2026-11-27 while creating the notebook:
+
+1. The open tab was `https://www.kaggle.com/code/techparamveer/latex-slm/edit` (draft title `latex-slm`).
+2. Session options offered accelerator `None`, `GPU T4 x2`, and `TPU v5e-8`. A single T4 was not in the list. `GPU T4 x2` was turned on. The confirm dialog said availability is limited to 30 hours per week and that 30 hours remained. Internet was already on. Persistence was left at `No persistence`.
+3. On the Mac, after committing:
+
+```
+python3 scripts/make_colab_sync_cell.py --dest /kaggle/working/latex-slm --no-drive > /tmp/kaggle_sync_cell.py
+```
+
+Paste that file into the first notebook cell and run it. It unpacks `git archive HEAD` with no GitHub token.
+4. Second cell, from the unpacked tree:
+
+```
+python3 scripts/kaggle_setup.py
+```
+
+That installs `requirements.txt`, prints `nvidia-smi -L`, and downloads `Qwen/Qwen2.5-Coder-0.5B-Instruct` to `/kaggle/working/models/Qwen2.5-Coder-0.5B-Instruct`. It does not start `04_train.py`.
+
+TeX Live is not installed by that script. The Colab apt line in section 2 is the compile install when a session is up.
+
 ## 1. Get the code onto Colab
 ```
 # on the Mac, in the repo, after committing:
