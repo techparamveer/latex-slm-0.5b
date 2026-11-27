@@ -1,7 +1,11 @@
 """LoRA SFT of a small causal LM on the LaTeX task mix (completion-only loss)."""
+import os
+
+# TRL's SFTTrainer raises ValueError when more than one GPU is visible.
+os.environ.setdefault("CUDA_VISIBLE_DEVICES", "0")
+
 import argparse
 import json
-import os
 
 import torch
 from datasets import Dataset
