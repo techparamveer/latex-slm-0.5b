@@ -2,8 +2,8 @@
 
 _Overwrite this file after every meaningful step._
 
-- **Last updated:** 2026-11-27 12:40 UTC
-- **Discord:** After measured work, `scripts/notify_discord.py` posts the provider and a base-vs-tuned summary. No webhook is configured yet. The URL belongs in `DISCORD_WEBHOOK_URL` or `~/.config/latex-slm/discord_webhook`, not in git.
+- **Last updated:** 2026-11-27 12:44 UTC
+- **Discord:** The webhook is stored at `~/.config/latex-slm/discord_webhook` (mode 600), not in git. A ping was accepted (`http 204`) for EXP-007: provider Kaggle with two Tesla T4s, Colab disconnected. The message listed the base-vs-tuned changes and said EXP-008 is still running with no new eval.
 - **Automation:** The 10-minute loop checks the existing Colab session first. If that session has no free GPU, it uses `aside-cua` on the existing Helium window and runs the Kaggle notebook `https://www.kaggle.com/code/techparamveer/latex-slm/edit`. On the Colab usage-limit dialog, leave Close, Connect without GPU, and Pay As You Go unclicked. Every reply that reports scores shows the base-vs-tuned chart (`html_preview`, then `html_render`), including when another agent gathered the numbers. The schedule is paused until the user turns it on. The same rules are in `AGENTS.md`.
 - **Phase:** A smoke is done. EXP-008 is running on Kaggle: TeX install, then a 1500-paper rebuild, then training only if the leakage check passes.
 - **Branch / commit:** `grok/train`. The notebook is unpacked at `cb59fe3`. This status update is the next commit.
