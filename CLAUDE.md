@@ -6,3 +6,4 @@
 - Do not commit data/, outputs/ or secrets. Keys come from Colab secrets or env vars.
 - Automation GPU order: check the existing Colab session first. If it has no free GPU, use `aside-cua` on the existing Helium window and run training on the logged-in kaggle.com notebook. Procedure: `docs/RUNBOOK.md` section "Kaggle".
 - Report real measured numbers only.
+- Every reply that reports scores shows one comparison chart of the latest measured eval: bars for base vs tuned, n labeled on each task. Pass the page through `html_preview`, then `html_render`. No title banner and no page background.
