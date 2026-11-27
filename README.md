@@ -1,4 +1,4 @@
-# latex-slm
+# latex-sml-0.5b
 
 Train a small (0.5B) LaTeX-specialised language model with LoRA. One model, four tasks:
 
